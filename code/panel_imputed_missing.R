@@ -67,3 +67,14 @@ knn_imput = function(panel_ke) {
 }
 
 imputed_data_economic = knn_imput(panel_ke)
+
+
+# Inspect df, tools for exploring and comparing data frames
+inspect_cor(imputed_data_economic, economic_data, show_plot = TRUE)
+
+# Descriptive statistics
+
+imputed_data_economic %>% 
+  group_by(country) %>% 
+  summarise_at(.vars = vars(fdi, irspread, domcredit, investment, trade, inflation, gdppc, tariff, hdi, High_Exports),
+               .funs = c(mean="mean"))

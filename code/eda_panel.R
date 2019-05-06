@@ -6,6 +6,10 @@ library(naniar) # Missing-values package
 panel_data_final <- read.table("../Knowledge-Economy-and-Economic-growth/data/panel_data_full2.csv", header = TRUE, sep = ",", fill = TRUE)
 panel_data_final$X <- NULL
 
+# Filter observations for year >= 1970
+
+panel_data_final <-subset(panel_data_final, year>=1970)
+
 #subset of countries, african countries and emerging countries using a robust method
 
 afemerge <- c("Algeria", "Angola", "Argentina", "Benin", "Botswana",  "Brazil", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon", "Central African Republic", "Chad", "China", "Colombia", 
@@ -48,7 +52,7 @@ yearlist <- length(unique(panel_ke$year))
 
 summary(panel_ke)
 
-#  Check Missing values. 41 % of missing values
+#  Check Missing values. 35 % of missing values
 
 anyNA(panel_ke)
 table(is.na(panel_ke))
@@ -62,18 +66,8 @@ miss_var_summary (panel_ke) %>%
   print(n = 26)
 
 # Check missing values per year
-
-# For time period 1960-1970
-
-panel_ke %>% 
-  group_by(year) %>% 
-  filter(year<=1970) %>% 
-  summarise_at(4:25, ~sum(!is.na(.))) %>% 
-  print(n = 30)
-
 # Period 1970-1980
-
-panel_ke %>% 
+##panel_ke %>% 
   group_by(year) %>% 
   filter(year>1970 & year<=1980) %>% 
   summarise_at(4:25, ~sum(!is.na(.))) %>% 
@@ -94,30 +88,23 @@ panel_ke %>%
   print(n = 30)
 
 
-
-
 # Missing visualizations
 
 gg_miss_var(panel_ke[, c(4:30)])
 
 
-# low method to determine which countries are increasing/decreasing
+# summarise for all economic variables per country
 
-panel_ke %>%
-    group_by(country) %>% 
-  summarise(m_hdi=mean(hdi, na.rm = T)) %>% 
-  arrange(desc(m_hdi))
-
-panel_ke %>%
+my_summary_eco <- panel_ke %>% 
   group_by(country) %>% 
-  summarise(m_trade=mean(trade, na.rm = T)) %>% 
-  arrange(desc(m_trade))
+  summarise_at(.vars = vars(fdi, hdi, gdppc, inflation, trade, tariff, High_Exports, investment, domcredit),
+               .funs = c(mean="mean"), na.rm =TRUE) 
 
-
-panel_ke %>% 
+my_summary_inst<-panel_ke %>% 
   group_by(country) %>% 
-  summarise(m_internet = mean(internet, na.rm =TRUE)) %>% 
-  arrange(desc(m_internet))
+  summarise_at(.vars = vars(Govern_Effect, Voice_Account, Rule_of_Law, Polit_Stability, Cont_corruption, Reg_qual),
+               .funs = c(mean="mean"), na.rm =TRUE) 
+
 
 # Using ggplot
 

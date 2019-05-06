@@ -1,6 +1,7 @@
 library(tidyverse)  
 library(naniar) # Missing-values package
 library(corrplot)  #Generate correlation matrix
+library(GGally)  # Generate histograms, scatter plots, etc
 
 # Load the dataset
 
@@ -96,6 +97,24 @@ my_summary_ict <- panel_ke %>%
   summarise_at(.vars = vars(articles, patents, mobile, telephone, trademark, internet),
                .funs = c(mean = "mean"), na.rm =TRUE)
 
+
+# Visualization with ggpairs for education variables
+
+educ_data <-panel_ke %>% 
+  select(primary, secondary, tertiary, exp_educ)
+
+ggpairs(educ_data, title= "Education variables")
+
+economic_data<-panel_ke %>% 
+  select(fdi, hdi, gdppc, inflation, trade, tariff, High_Exports, investment, domcredit)
+
+ggpairs(economic_data, title = "Economic data")
+
+
+inst_data<- panel_ke %>% 
+  select(Govern_Effect, Voice_Account, Rule_of_Law, Polit_Stability, Cont_corruption, Reg_qual)
+
+ggpairs(inst_data, title = "Institutional variables")
 
 # Generate correlation matrix
 
